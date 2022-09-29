@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
-  title: Nintendo Games API
-  description: Swagger Specification of the Nintendo Games API
-  version: 1.0.0
+  title: Game Resource API
+  description: Demo Swagger Specification for the Game Resource API
+  version: 1.0.1
 servers:
   - url: localhost:8080/v1
 tags:
@@ -96,11 +96,7 @@ paths:
           schema:
             type: string
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Game"
+        $ref: "#/components/requestBodies/Game"
       responses:
         "200":
           description: Game updated successfully.
