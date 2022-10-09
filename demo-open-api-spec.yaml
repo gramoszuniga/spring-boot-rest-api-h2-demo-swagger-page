@@ -2,9 +2,9 @@ openapi: 3.0.3
 info:
   title: Game Resource API
   description: Demo Swagger Specification for the Game Resource API
-  version: 1.0.1
+  version: 1.1.0
 servers:
-  - url: localhost:8080/v1
+  - url: /v1
 tags:
   - name: Games
 paths:
@@ -69,6 +69,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Game"
+        "404":
+          description: Game not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      tags:
+        - Games
+      summary: Patch game.
+      description: Patch game by id
+      parameters:
+        - name: id
+          in: path
+          description: Id of game to be patched.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      requestBody:
+        $ref: "#/components/requestBodies/JsonPatch"
+      responses:
+        "200":
+          description: Game patched successfully.
         "404":
           description: Game not found.
           content:
@@ -240,6 +271,38 @@ components:
           format: int64
           description: Id of game.
           example: 992
+    JsonPatchOperation:
+      required:
+        - op
+        - path
+      type: object
+      properties:
+        op:
+          type: string
+          description: Operation of Json patch.
+          example: replace
+        path:
+          type: string
+          description: Path of Json patch.
+          example: title
+    PathValueOperation:
+      allOf:
+        - $ref: "#/components/schemas/JsonPatchOperation"
+      required:
+        - value
+      type: object
+      properties:
+        value:
+          type: string
+          description: Value of Json patch.
+          example: "The Legend of Zelda: Tears of the Kingdom"
+    ReplaceOperation:
+      allOf:
+        - $ref: "#/components/schemas/PathValueOperation"
+    JsonPatchRequest:
+      type: array
+      items:
+        $ref: "#/components/schemas/ReplaceOperation"
     ErrorResponse:
       required:
         - message
@@ -256,3 +319,9 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/GameRequest"
+    JsonPatch:
+      required: true
+      content:
+        application/json-patch+json:
+          schema:
+            $ref: "#/components/schemas/JsonPatchRequest"
